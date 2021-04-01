@@ -1,2 +1,1 @@
-discord==1.6.0
 python-decouple==3.4
