@@ -1,3 +1,4 @@
 # Distribution / packaging
 .idea/
+.env
 env/
