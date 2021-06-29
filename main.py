@@ -49,22 +49,30 @@ class FrankBot(commands.Bot):
     # Get update from member
     async def on_member_update(self, before, after):
         if before is not after:
+            ttv = discord.utils.find(lambda x: x.name == "ttv", after.guild.roles)
+            streaming_role = discord.utils.find(lambda x: x.name == "🔴 Streaming", after.guild.roles)
+            # checks if the member has a ttv role
             # current streaming status
-            if after.status == "streaming":
-                # checks if the member has a ttv role
-                ttv = discord.utils.find(lambda x: x.name == "ttv", after.guild.roles)
+            if after.activity.type is not discord.ActivityType.streaming:
+                if streaming_role in after.roles:
+                    print(f"{after.name} has stopped streaming.")
+                    await after.remove_roles(streaming_role)
+            else:
                 if ttv in after.roles:
-                    # checks if the member has the streaming role
-                    streaming = discord.utils.find(lambda x: x.name == "🔴 Streaming", after.guild.roles)
-                    if streaming not in after.roles:
-                        # add the user to the streaming
-                        after.add_roles(streaming)
+                    if streaming_role not in after.roles:
+                        print(f"{after.name} has started streaming.")
+                        await after.add_roles(streaming_role)
             # checks if the streaming role was recently added to the after member
             streaming = discord.utils.find(lambda x: x.name == "🔴 Streaming", after.guild.roles)
             if streaming in after.roles and streaming not in before.roles:
-                # sends streaming message to
+                # sends streaming message to the streaming channel
                 streaming_channel = discord.utils.find(lambda x: x.name == "streaming", after.guild.channels)
-                # await streaming_channel.send(f"{after.name} is now live on {}")
+                await streaming_channel.send(f"{after.name} is now live on {after.activity.streaming.platform},\033[3m{'playing'}\033[0m {after.activity.streaming.game}! \n"
+                                             f"\n"
+                                             f"Title: {after.activity.streaming.name} \n"
+                                             f"Url: {after.activity.streaming.url}")
+
+
 
 
 
