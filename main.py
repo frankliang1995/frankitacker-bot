@@ -35,7 +35,6 @@ class FrankBot(commands.Bot):
     # Gets message from client
     async def on_message(self, message):
         if message.author.bot:
-
             return
 
         await self.process_commands(message)
@@ -52,7 +51,7 @@ class FrankBot(commands.Bot):
         if before is not after:
             ttv = discord.utils.find(lambda x: x.name == "ttv", after.guild.roles)
             streaming_role = discord.utils.find(lambda x: x.name == "🔴 Streaming", after.guild.roles)
-            activity_type = None;
+            activity_type = None
             try:
                 activity_type = after.activity.type
             except:
