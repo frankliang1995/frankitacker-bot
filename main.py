@@ -10,6 +10,7 @@ INITIAL_EXTENSIONS = [
     'cogs.roles',
     'cogs.mods',
     'cogs.twitch',
+    'cogs.music',
 ]
 
 class FrankBot(commands.Bot):

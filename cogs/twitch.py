@@ -7,7 +7,7 @@ class Twitch(commands.Cog):
     async def on_member_update(self, before, after):
         if before is not after:
             ttv = discord.utils.find(lambda x: x.name == "ttv", after.guild.roles)
-            streaming_role = discord.utils.find(lambda x: x.name == "🔴 Streaming", after.guild.roles)
+            streaming_role = discord.utils.find(lambda x: x.name == "🔴 Streaming Live Now", after.guild.roles)
             activity_type = None
             try:
                 activity_type = after.activity.type
