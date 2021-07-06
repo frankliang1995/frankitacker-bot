@@ -25,11 +25,13 @@ class Roles(commands.Cog):
         if role is None:
             return await ctx.send("You need to specify a role")
         # Checks if the user is not in the specified role
-        if role not in member.roles:
-            await member.add_roles(role)
-            await ctx.send(f"@everyone {member.name} is now part of {role.name}.")
-        else:
-            await ctx.send(f"{member.name} is already in {role.name}")
+        try:
+            if role not in member.roles:
+                await member.add_roles(role)
+                await ctx.send(f"@everyone {member.name} is now part of {role.name}.")
+            else:
+                await ctx.send(f"{member.name} is already in {role.name}")
+        except: ctx.send("Something went wrong.")
     # Removing the role from users (only admins or roles with role management)
     @commands.group(name="removerole", invoke_without_command=True)
     @commands.has_permissions(administrator=True, manage_roles=True)
@@ -46,6 +48,14 @@ class Roles(commands.Cog):
             await ctx.send(f"@everyone {member.name} is no longer a part of {role.name}.")
         else:
             await ctx.send(f"{member.name} was not in {role.name}")
+    @addRole.error
+    @removeRole.error
+    async def addrole_error(self, error, ctx):
+        if isinstance(error, commands.CheckFailure):
+            await ctx.send("You do not have role management permissions.")
+        elif isinstance(error, commands.BadArgument):
+            await ctx.send("Could not identify target")
+        else: raise error
     # New members coming into the discord
     async def on_member_join(self, member):
         twitch_sub = discord.utils.find(lambda x: x.name == "Twitch Subscriber", member.guild.roles)
