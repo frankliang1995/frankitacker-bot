@@ -7,6 +7,7 @@ class Music(commands.Cog):
 
     @commands.group(name="play", invoke_without_command=True)
     async def play(self, ctx, url: str):
+        print("play")
         voiceChannel = discord.utils.find(ctx.guild.voice_channels, name=ctx.author.voice_channels)
         await voiceChannel.connect()
 

@@ -16,22 +16,22 @@ class Roles(commands.Cog):
         self.bot = bot
     # Adding the role to users (only admins or roles with role management)
     @commands.group(name="addrole", invoke_without_command=True)
-    @commands.has_permissions(administrator=True, manage_roles=True)
     async def addRole(self, ctx, member: discord.Member = None, role: BetterRoles=None):
-        # Check if the user is specified
-        if member is None:
-            return await ctx.send("You need to specify the member.")
-        # Checks if the role is specified
-        if role is None:
-            return await ctx.send("You need to specify a role")
-        # Checks if the user is not in the specified role
-        try:
+        if ctx.author.has_permission("manage_role"):
+            # Check if the user is specified
+            if member is None:
+                return await ctx.send("You need to specify the member.")
+            # Checks if the role is specified
+            if role is None:
+                return await ctx.send("You need to specify a role")
+            # Checks if the user is not in the specified role
             if role not in member.roles:
-                await member.add_roles(role)
-                await ctx.send(f"@everyone {member.name} is now part of {role.name}.")
+                try:
+                    await member.add_roles(role)
+                    await ctx.send(f"@everyone {member.name} is now part of {role.name}.")
+                except: ctx.send("Something went wrong.")
             else:
                 await ctx.send(f"{member.name} is already in {role.name}")
-        except: ctx.send("Something went wrong.")
     # Removing the role from users (only admins or roles with role management)
     @commands.group(name="removerole", invoke_without_command=True)
     @commands.has_permissions(administrator=True, manage_roles=True)
@@ -44,8 +44,10 @@ class Roles(commands.Cog):
             return await ctx.send("You need to specify a role")
         # Checks if the user is in the specified role
         if role in ctx.author.roles:
-            await ctx.author.remove_roles(role)
-            await ctx.send(f"@everyone {member.name} is no longer a part of {role.name}.")
+            try:
+                await ctx.author.remove_roles(role)
+                await ctx.send(f"@everyone {member.name} is no longer a part of {role.name}.")
+            except: ctx.send("Something went wrong.")
         else:
             await ctx.send(f"{member.name} was not in {role.name}")
     @addRole.error

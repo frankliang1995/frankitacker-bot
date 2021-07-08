@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 class Twitch(commands.Cog):
+    # key = streaming member, value = message value
+    stream_dict = {}
     def __init__(self, bot):
         self.bot = bot
     # Get update from member
