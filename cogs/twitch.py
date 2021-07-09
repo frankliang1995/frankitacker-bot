@@ -7,6 +7,7 @@ class Twitch(commands.Cog):
         self.bot = bot
     # Get update from member
     async def on_member_update(self, before, after):
+        print("change")
         if before is not after:
             ttv = discord.utils.find(lambda x: x.name == "ttv", after.guild.roles)
             streaming_role = discord.utils.find(lambda x: x.name == "🔴 Streaming Live Now", after.guild.roles)

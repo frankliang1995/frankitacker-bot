@@ -8,9 +8,9 @@ import aiohttp
 
 INITIAL_EXTENSIONS = [
     'cogs.roles',
-    # 'cogs.mods',
-    # 'cogs.twitch',
-    # 'cogs.music',
+    'cogs.mods',
+    'cogs.twitch',
+    'cogs.music',
 ]
 
 class FrankBot(commands.Bot):
@@ -29,17 +29,15 @@ class FrankBot(commands.Bot):
             except Exception as e:
                 print('Failed to load extension {}\n{}: {}'.format(
                     extension, type(e).__name__, e))
-
     # Let us know the bot is ready
     async def on_ready(self):
         # self.session = aiohttp.ClientSession(loop=self.loop)
         print('We have logged in as ' + self.user.name)
-
     # Gets message from client
-    @commands.bot_has_permissions(administrator=True)
     async def on_message(self, message):
         if message.author.bot:
             return
+        print(message.author)
         await self.process_commands(message)
         ctx = await self.get_context(message)
         if ctx.invoked_with and ctx.invoked_with.lower() not in self.commands and ctx.command is None:
@@ -48,20 +46,14 @@ class FrankBot(commands.Bot):
                 new_content = msg.content[len(ctx.prefix):]
                 msg.content = "{}tag get {}".format(ctx.prefix, new_content)
                 await self.process_commands(msg)
-
     # Get update from member
     async def on_member_update(self, before, after):
-        print ("change")
         if before is not after:
+            # --------------------- Twitch -----------------------------------------------------------------
             ttv = discord.utils.find(lambda x: x.name == "ttv", after.guild.roles)
             streaming_role = discord.utils.find(lambda x: x.name == "🔴 Streaming Live Now", after.guild.roles)
-            activity_type = None
-            try:
-                activity_type = after.activity.type
-            except:
-                pass
             # current streaming status
-            if activity_type is not discord.ActivityType.streaming:
+            if after.activity.type is discord.ActivityType.streaming and before.activity.type is not discord.ActivityType.streaming:
                 if streaming_role in after.roles:
                     print(f"{after.name} has stopped streaming.")
                     await after.remove_roles(streaming_role)
@@ -86,6 +78,7 @@ class FrankBot(commands.Bot):
                 # delete streaming message from channel
                 msg = await self.get_message(streaming_channel, self.stream_dict[after])
                 await msg.delete()
+            # ------------------------------------------------------------------------------
     # Closes the session
     async def close(self):
         await super().close()
