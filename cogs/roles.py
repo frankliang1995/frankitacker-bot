@@ -1,7 +1,6 @@
 import discord
 
 from discord.ext import commands
-
 # Role Conversion
 class BetterRoles(commands.Converter):
     async def convert(self, ctx, argument):
@@ -15,7 +14,7 @@ class Roles(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     # Adding the role to users (only admins or roles with role management)
-    @commands.group(name="addrole", invoke_without_command=True)
+    @commands.group(name="addrole", invoke_without_command=True, pass_context=True)
     @commands.has_permissions(administrator=True, manage_roles=True)
     async def addRole(self, ctx, member: discord.Member = None, role: BetterRoles=None):
         # Check if the user is specified
@@ -33,7 +32,7 @@ class Roles(commands.Cog):
         else:
             await ctx.send(f"{member.name} is already in {role.name}")
     # Removing the role from users (only admins or roles with role management)
-    @commands.group(name="removerole", invoke_without_command=True)
+    @commands.group(name="removerole", invoke_without_command=True, pass_context=True)
     async def removeRole(self, ctx, member: discord.Member=None, role: BetterRoles=None):
         # Check if the user is specified
         if member is None:
@@ -46,17 +45,14 @@ class Roles(commands.Cog):
             try:
                 await ctx.author.remove_roles(role)
                 await ctx.send(f"@everyone {member.name} is no longer a part of {role.name}.")
-            except BaseException: ctx.send("Something went wrong.")
+            except: ctx.send("Something went wrong.")
         else:
             await ctx.send(f"{member.name} was not in {role.name}")
     @addRole.error
     @removeRole.error
     async def role_error(self, error, ctx):
-        if isinstance(error, commands.CheckFailure):
-            await ctx.send("You do not have role management permissions.")
-        elif isinstance(error, commands.BadArgument):
-            await ctx.send("Could not identify target")
-        else: raise error
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send(f"Sorry {ctx.message.author}, you do not have permissions to do that!")
     # New members coming into the discord
     async def on_member_join(self, member):
         twitch_sub = discord.utils.find(lambda x: x.name == "Twitch Subscriber", member.guild.roles)

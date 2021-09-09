@@ -9,9 +9,13 @@ class Mods(commands.Cog):
     @commands.has_permissions(administrator=True, kick_members=True)
     async def kick(self, ctx, member: discord.Member=None, reason="No Reason Provided."):
         try:
-            await self.kick(member)
-            await ctx.send(f"{member} has been kicked. \n"
-                           f"Reason: {reason}")
+            if ctx.author.top_role > member.top_role:
+                await self.kick(member)
+                await ctx.send(f"{member} has been kicked. \n"
+                               f"Reason: {reason}")
+            elif ctx.author.top_role > member.top_role:
+                ctx.send(f"{member.display_name} has the same highest role as you.")
+            else: ctx.send(f"{member.display_name} has a higher than you.")
         except:
             await ctx.send("Something went wrong")
     @kick.error

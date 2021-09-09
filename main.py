@@ -11,6 +11,7 @@ INITIAL_EXTENSIONS = [
     'cogs.mods',
     'cogs.twitch',
     'cogs.music',
+    'cogs.server',
 ]
 
 class FrankBot(commands.Bot):
@@ -37,7 +38,6 @@ class FrankBot(commands.Bot):
     async def on_message(self, message):
         if message.author.bot:
             return
-        print(message.author)
         await self.process_commands(message)
         ctx = await self.get_context(message)
         if ctx.invoked_with and ctx.invoked_with.lower() not in self.commands and ctx.command is None:
